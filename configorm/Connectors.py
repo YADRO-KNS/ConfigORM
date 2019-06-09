@@ -1,10 +1,12 @@
 from configparser import ConfigParser
+from abc import ABC, abstractmethod
 
 
-class Connector(object):
+class Connector(ABC):
     def __init__(self, connection_string):
         self.connection_string = connection_string
 
+    @abstractmethod
     def get_value(self, section_name: str, attr_name: str):
         pass
 
