@@ -39,7 +39,7 @@ class StringField(Field):
         super().__init__(default=default, null=null)
 
     def cast_value(self, value):
-        return str(value)
+        return str(value).strip()
 
 
 class FloatField(Field):
