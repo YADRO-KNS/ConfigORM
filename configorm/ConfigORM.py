@@ -42,7 +42,7 @@ class SectionBase(type):
                     meta_options[key] = value
 
         for base in bases:
-            if not hasattr(base, '_meta'):
+            if not hasattr(base, 'meta'):
                 continue
 
             base_meta = base.meta

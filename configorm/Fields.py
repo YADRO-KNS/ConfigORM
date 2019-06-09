@@ -6,7 +6,7 @@ class Field(object):
         self.name = None
         self.value = None
 
-        self._meta = None
+        self.meta = None
 
     def __get__(self, instance, owner):
         value = self.get_value()
@@ -18,12 +18,12 @@ class Field(object):
         pass
 
     def get_value(self):
-        return self._meta.connector.get_value(section_name=self.section.meta.name, attr_name=self.name)
+        return self.meta.connector.get_value(section_name=self.section.meta.name, attr_name=self.name)
 
     def bind(self, section, name, meta):
         self.section = section
         self.name = name
-        self._meta = meta
+        self.meta = meta
 
 
 class IntegerField(Field):
