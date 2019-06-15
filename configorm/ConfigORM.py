@@ -71,3 +71,13 @@ class Section(with_metaclass(SectionBase)):
     def __init__(self, **kwargs):
         for key in kwargs:
             setattr(self, key, kwargs[key])
+
+    @classmethod
+    def check_config_integrity(cls):
+        for section in cls.__subclasses__():
+            if cls.meta.connector.is_section_exist(section_name=section.__name__) is False:
+                cls.meta.connector.add_section(section_name=section.__name__)
+
+            for field_name, field_entry in section.meta.fields.items():
+                if cls.meta.connector.is_attr_exist(section_name=section.__name__, attr_name=field_name) is False:
+                    cls.meta.connector.add_attr(section_name=section.__name__, attr_name=field_name, value=field_entry.default)
