@@ -75,6 +75,7 @@ True
 
 
 You may provide default fallback values for your fields.
+If field may return None Type values, null parameter must be set as True
 
 ```python
 from configorm import *
@@ -84,6 +85,19 @@ class Database(Section):
     password = StringField(default='secret')
     user = StringField(default='admin')
     base = StringField(default='development')
+    
+    possible_none_value = StringField(null=True)
 
 ```
 
+
+Base Section aside from connection to config file also provides tool to create
+ configuration from models, allowing model-first approach. It crates config file,
+ sections from your models names and option based on provided fields. In case if
+ fields have default values, they will be written in config as well. Otherwise
+ options will be filled with empty values.
+ 
+```
+>>> from Config import *
+>>> BaseSection.check_config_integrity()
+```
