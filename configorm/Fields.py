@@ -10,8 +10,10 @@ class Field(object):
 
     def __get__(self, instance, owner):
         value = self.get_value()
-        if value is None:
+        if value is None and self.default is not None:
             value = self.default
+        if value is None and self.null is True:
+            return None
         return self.cast_value(value)
 
     def cast_value(self, value):
