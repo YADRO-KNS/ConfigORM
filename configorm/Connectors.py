@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 from abc import ABC, abstractmethod
+import os
 
 
 class Connector(ABC):
@@ -7,11 +8,15 @@ class Connector(ABC):
         self.connection_string = connection_string
 
     @abstractmethod
-    def get_value(self, section_name: str, attr_name: str):
+    def is_config_exist(self) -> bool:
         pass
 
     @abstractmethod
-    def clean_file(self):
+    def create_config(self) -> None:
+        pass
+
+    @abstractmethod
+    def get_value(self, section_name: str, attr_name: str):
         pass
 
     @abstractmethod
@@ -47,9 +52,6 @@ class IniConnector(Connector):
                         result = config[section][attr]
 
         return result
-
-    def clean_file(self):
-        open(self.connection_string, 'w').close()
 
     def is_section_exist(self, section_name: str) -> bool:
         config = ConfigParser(allow_no_value=True)
@@ -90,3 +92,11 @@ class IniConnector(Connector):
             config.read(self.connection_string)
             config.set(section=section_name, option=attr_name, value=value)
             config.write(fp=open(file=self.connection_string, mode='w'))
+
+    def is_config_exist(self) -> bool:
+        return os.path.isfile(self.connection_string)
+
+    def create_config(self) -> None:
+        if self.is_config_exist() is False:
+            file = open(file=self.connection_string, mode="w+")
+            file.close()

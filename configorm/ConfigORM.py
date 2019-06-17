@@ -8,16 +8,12 @@ def with_metaclass(meta, base=object):
 
 
 class Metadata(object):
-    def __init__(self, section, connector=None, **kwargs):
+    def __init__(self, section, connector=None):
         self.section = section
         self.connector = connector
 
         self.fields = {}
-
         self.name = section.__name__.lower()
-
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
     def add_field(self, field_name, field):
         if field_name not in self.fields:
@@ -69,11 +65,12 @@ class SectionBase(type):
 
 class Section(with_metaclass(SectionBase)):
     def __init__(self, **kwargs):
-        for key in kwargs:
-            setattr(self, key, kwargs[key])
+        pass
 
     @classmethod
     def check_config_integrity(cls):
+        cls.meta.connector.create_config()
+
         for section in cls.__subclasses__():
             if cls.meta.connector.is_section_exist(section_name=section.__name__) is False:
                 cls.meta.connector.add_section(section_name=section.__name__)
