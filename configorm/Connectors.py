@@ -82,7 +82,8 @@ class IniConnector(Connector):
             config = ConfigParser(allow_no_value=True)
             config.read(self.connection_string)
             config.add_section(section=(section_name.replace('_', ' ')))
-            config.write(fp=open(file=self.connection_string, mode='w'))
+            with open(file=self.connection_string, mode='w') as file:
+                config.write(fp=file)
 
     def add_attr(self, section_name: str, attr_name: str, value: str):
         if self.is_attr_exist(section_name=section_name, attr_name=attr_name) is False:
@@ -91,7 +92,8 @@ class IniConnector(Connector):
             config = ConfigParser(allow_no_value=True)
             config.read(self.connection_string)
             config.set(section=section_name, option=attr_name, value=value)
-            config.write(fp=open(file=self.connection_string, mode='w'))
+            with open(file=self.connection_string, mode='w') as file:
+                config.write(fp=file)
 
     def is_config_exist(self) -> bool:
         return os.path.isfile(self.connection_string)
