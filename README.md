@@ -1,5 +1,5 @@
 # ConfigORM
-
+[![Build Status](https://travis-ci.com/YADRO-KNS/ConfigORM.svg?branch=master)](https://github.com/YADRO-KNS/ConfigORM)
 
 ----
 
