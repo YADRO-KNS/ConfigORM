@@ -57,4 +57,9 @@ class BooleanField(Field):
         super().__init__(default=default, null=null)
 
     def cast_value(self, value):
-        return bool(value)
+        if value == 'True':
+            return True
+        elif value == 'False':
+            return False
+        else:
+            return bool(value)
