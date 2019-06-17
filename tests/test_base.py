@@ -1,5 +1,6 @@
 import unittest
 import os
+from configparser import *
 
 from configorm import *
 
@@ -18,6 +19,7 @@ class SectionA(BaseSection):
     integer = IntegerField()
     float = FloatField()
     bool = BooleanField()
+    null_value = IntegerField(null=True)
 
 
 class SectionB(BaseSection):
@@ -37,28 +39,54 @@ class TestConfigORMCreation(unittest.TestCase):
 
 
 class TestConfigORMFieldsWithCorrectValues(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        BaseSection.check_config_integrity()
+
     def test_string_filed(self):
-        self.assertEqual(SectionA.string, 'Test String')
+        result = SectionA.string
+        self.assertEqual(result, 'Test String')
 
     def test_integer_field(self):
-        self.assertEqual(SectionA.integer, 42)
+        result = SectionA.integer
+        self.assertEqual(result, 42)
 
     def test_float_field(self):
-        self.assertEqual(SectionA.float, 36.6)
+        result = SectionA.float
+        self.assertEqual(result, 36.6)
 
     def test_bool_field(self):
-        self.assertTrue(SectionA.bool)
+        result = SectionA.bool
+        self.assertTrue(result)
+
+    def test_null_value(self):
+        result = SectionA.null_value
+        self.assertIsNone(result)
 
 
 class TestConfigORMFieldsWithDefaultValues(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        config = ConfigParser(allow_no_value=True)
+        with open(SectionB.meta.connector.connection_string, "r") as file:
+            config.read_file(file)
+        config.remove_section('SectionB')
+        with open(SectionB.meta.connector.connection_string, "w") as file:
+            config.write(file)
+
     def test_string_filed(self):
-        self.assertEqual(SectionB.string, 'Default Placeholder')
+        result = SectionB.string
+        self.assertEqual(result, 'Default Placeholder')
 
     def test_integer_field(self):
-        self.assertEqual(SectionB.integer, 33)
+        result = SectionB.integer
+        self.assertEqual(result, 33)
 
     def test_float_field(self):
-        self.assertEqual(SectionB.float, 0.5)
+        result = SectionB.float
+        self.assertEqual(result, 0.5)
 
     def test_bool_field(self):
-        self.assertFalse(SectionB.bool)
+        result = SectionB.bool
+        self.assertFalse(result)
+
