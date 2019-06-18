@@ -1,6 +1,9 @@
 # ConfigORM
 [![Build Status](https://travis-ci.com/YADRO-KNS/ConfigORM.svg?branch=master)](https://github.com/YADRO-KNS/ConfigORM)
-
+![PyPI - Status](https://img.shields.io/pypi/status/ConfigORM.svg)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ConfigORM.svg)
+![PyPI](https://img.shields.io/pypi/v/ConfigORM.svg)
+![PyPI - License](https://img.shields.io/pypi/l/ConfigORM.svg)
 ----
 
 Heavily inspired by Charles Leifer [peewee](https://github.com/coleifer/peewee) ORM.
