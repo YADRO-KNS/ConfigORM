@@ -10,8 +10,6 @@ Heavily inspired by Charles Leifer [peewee](https://github.com/coleifer/peewee) 
 This package provides ORM-like interface to interact with *.ini configs. 
 And map their data onto object models.
 
-
-
 Examples
 --------
 Lets say we have config like this:
@@ -66,6 +64,8 @@ class General(BaseSection):
 Section names must match their counterparts in ini file, but case does not matter at all.
 All spaces in section or key names of config file will be treated as underlines. 
 
+Field Types
+--------
 
 Depending on field data will be casted to exact type.
 ```
@@ -76,6 +76,30 @@ True
 <class 'bool'>
 ```
 
+Available Field Types:
+* **StringField** 
+* **IntegerField** 
+* **BooleanField** 
+* **FloatField** 
+* **ListField** 
+
+Most of field types are self-explanatory, ListField is a bit tricky. It allows to store and 
+extract data as list of homogeneous objects, such as strings, integers, floats and booleans.
+You must provide exec type of stored objects.
+
+```python
+from configorm import *
+
+class TestSection(Section):
+    list_of_int = ListField(var_type=int)
+    list_of_str = ListField(var_type=str)
+    list_of_float = ListField(var_type=float)
+    list_of_bool = ListField(var_type=bool)
+
+```
+ 
+Fallback Values
+--------
 
 You may provide default fallback values for your fields.
 If field may return None Type values, null parameter must be set as True
@@ -93,6 +117,8 @@ class Database(Section):
 
 ```
 
+Model First Approach
+--------
 
 Base Section aside from connection to config file also provides tool to create
  configuration from models, allowing model-first approach. It crates config file,
@@ -104,3 +130,4 @@ Base Section aside from connection to config file also provides tool to create
 >>> from Config import *
 >>> BaseSection.check_config_integrity()
 ```
+
