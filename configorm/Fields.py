@@ -11,7 +11,7 @@ class Field(object):
     def __get__(self, instance, owner):
         value = self.get_value()
         if value is None and self.default is not None:
-            value = self.default
+            return self.default
         if value is None and self.null is True:
             return None
         return self.cast_value(value)
@@ -63,3 +63,30 @@ class BooleanField(Field):
             return False
         else:
             return bool(value)
+
+
+class ListField(Field):
+    def __init__(self, var_type: type, default: list = None, null: bool = False):
+        self.type = var_type
+        super().__init__(default, null)
+
+        if self.type not in [int, str, float, bool]:
+            raise Exception('Unknown base type %s passed into ListField' % str(self.type))
+
+    def cast_value(self, value):
+        result = []
+        for element in value.replace('[', '').replace(']', '').split(','):
+            if self.type == int:
+                result.append(int(element.strip()))
+            elif self.type == str:
+                result.append(element.strip().replace("'", ''))
+            elif self.type == float:
+                result.append(float(element.strip()))
+            elif self.type == bool:
+                if element.strip() == 'True':
+                    result.append(True)
+                elif element.strip() == 'False':
+                    result.append(False)
+                else:
+                    result.append(bool(element.strip()))
+        return result
