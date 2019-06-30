@@ -4,6 +4,7 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ConfigORM.svg)
 ![PyPI](https://img.shields.io/pypi/v/ConfigORM.svg)
 ![PyPI - License](https://img.shields.io/pypi/l/ConfigORM.svg)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/ConfigORM.svg)
 ----
 
 Heavily inspired by Charles Leifer [peewee](https://github.com/coleifer/peewee) ORM.
