@@ -53,6 +53,23 @@ class IniConnector(Connector):
 
         return result
 
+    def set_value(self, section_name: str, attr_name: str, value: str):
+        config = ConfigParser(allow_no_value=True)
+        if value is not None:
+            value = str(value)
+        if self.is_section_exist(section_name=section_name) is True:
+            if self.is_attr_exist(section_name=section_name, attr_name=attr_name) is True:
+                config.read(self.connection_string)
+                for section in config.sections():
+                    if section.lower().replace(' ', '_') == section_name.lower().replace(' ', '_'):
+                        for attr in config[section]:
+                            if attr.lower().replace(' ', '_') == attr_name.lower().replace(' ', '_'):
+                                config.set(section=section, option=attr, value=value)
+                                with open(file=self.connection_string, mode='w') as file:
+                                    config.write(fp=file)
+            else:
+                self.add_attr(section_name=section_name, attr_name=attr_name, value=value)
+
     def is_section_exist(self, section_name: str) -> bool:
         config = ConfigParser(allow_no_value=True)
         config.read(self.connection_string)
