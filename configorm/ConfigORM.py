@@ -62,6 +62,21 @@ class SectionBase(type):
 
         return mcs
 
+    def __setattr__(self, attr, val):
+        try:
+            obj = object.__getattribute__(self, attr)
+        except AttributeError:
+            try:
+                object.__setattr__(self, attr, val)
+            except TypeError:
+                if attr == 'meta':
+                    type.__setattr__(self, attr, val)
+        else:
+            if hasattr(obj, '__set__'):
+                obj.__set__(self, val)
+            else:
+                object.__setattr__(self, attr, val)
+
 
 class Section(with_metaclass(SectionBase)):
     def __init__(self, **kwargs):
