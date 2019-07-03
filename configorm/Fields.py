@@ -9,18 +9,29 @@ class Field(object):
         self.meta = None
 
     def __get__(self, instance, owner):
-        value = self.get_value()
+        value = self.meta.connector.get_value(section_name=self.section.meta.name, attr_name=self.name)
         if value is None and self.default is not None:
             return self.default
         if value is None and self.null is True:
             return None
         return self.cast_value(value)
 
+    def __set__(self, instance, value):
+        if value is None:
+            if self.null is False:
+                raise ValueError('None value passed into non null Field')
+            else:
+                self.meta.connector.set_value(section_name=self.section.meta.name, attr_name=self.name, value=value)
+        elif self.check_value(value) is True:
+            self.meta.connector.set_value(section_name=self.section.meta.name, attr_name=self.name, value=value)
+        else:
+            raise TypeError('Incorrect type passed into Field')
+
     def cast_value(self, value):
         pass
 
-    def get_value(self):
-        return self.meta.connector.get_value(section_name=self.section.meta.name, attr_name=self.name)
+    def check_value(self, value):
+        pass
 
     def bind(self, section, name, meta):
         self.section = section
@@ -35,6 +46,9 @@ class IntegerField(Field):
     def cast_value(self, value):
         return int(value)
 
+    def check_value(self, value):
+        return isinstance(value, int)
+
 
 class StringField(Field):
     def __init__(self, default: str = None, null: bool = False):
@@ -43,6 +57,9 @@ class StringField(Field):
     def cast_value(self, value):
         return str(value).strip()
 
+    def check_value(self, value):
+        return isinstance(value, str)
+
 
 class FloatField(Field):
     def __init__(self, default: float = None, null: bool = False):
@@ -50,6 +67,9 @@ class FloatField(Field):
 
     def cast_value(self, value):
         return float(value)
+
+    def check_value(self, value):
+        return isinstance(value, float)
 
 
 class BooleanField(Field):
@@ -63,6 +83,9 @@ class BooleanField(Field):
             return False
         else:
             return bool(value)
+
+    def check_value(self, value):
+        return isinstance(value, bool)
 
 
 class ListField(Field):
@@ -90,3 +113,6 @@ class ListField(Field):
                 else:
                     result.append(bool(element.strip()))
         return result
+
+    def check_value(self, value):
+        return isinstance(value, list) and all(isinstance(n, self.type) for n in value)
