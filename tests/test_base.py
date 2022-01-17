@@ -1,3 +1,4 @@
+import shutil
 import unittest
 import os
 from configparser import *
@@ -6,6 +7,7 @@ from configorm import *
 
 package_dir = os.path.abspath(os.path.dirname(__file__))
 connection_string = os.path.join(package_dir, 'fixtures/config.ini')
+
 connector = IniConnector(connection_string=connection_string)
 
 
@@ -90,7 +92,17 @@ class TestConfigORMFieldsWithCorrectValues(unittest.TestCase):
 class TestConfigORMSetFieldValues(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
+        fixture_config = os.path.join(package_dir, 'fixtures/config.ini')
+        restore_config = os.path.join(package_dir, 'fixtures/restore.ini')
+        shutil.copy(fixture_config, restore_config)
         BaseSection.check_config_integrity()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        fixture_config = os.path.join(package_dir, 'fixtures/config.ini')
+        restore_config = os.path.join(package_dir, 'fixtures/restore.ini')
+        shutil.copy(restore_config, fixture_config)
+        os.remove(restore_config)
 
     def test_set_string_filed(self):
         value = 'New Test String'
