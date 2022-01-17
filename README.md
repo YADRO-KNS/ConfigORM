@@ -124,11 +124,11 @@ class Database(Section):
 
 ```
  
-Environment Variables Override
+#### Environment Variables Override
 --------
 
 You can override filed values with data from environment variables. Set 
-** env_override ** flag as True and if value is present in environment field
+**env_override** flag as True and if value is present in environment field
 will attempt to use that. Environment key is formed from concatenation of 
 section and field name in upper case. If value is missing from environment 
 variables field will use standard approach. 
