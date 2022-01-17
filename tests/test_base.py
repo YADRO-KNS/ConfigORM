@@ -87,6 +87,72 @@ class TestConfigORMFieldsWithCorrectValues(unittest.TestCase):
         self.assertEqual(result, [True, False, True])
 
 
+class TestConfigORMSetFieldValues(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        BaseSection.check_config_integrity()
+
+    def test_set_string_filed(self):
+        value = 'New Test String'
+        SectionA.string_field = value
+        result = SectionA.string_field
+        self.assertEqual(result, value)
+
+    def test_set_integer_field(self):
+        value = 55
+        SectionA.integer_field = value
+        result = SectionA.integer_field
+        self.assertEqual(result, value)
+
+    def test_set_float_field(self):
+        value = 33.55
+        SectionA.float_field = value
+        result = SectionA.float_field
+        self.assertEqual(result, value)
+
+    def test_set_bool_field(self):
+        value = False
+        SectionA.bool_field = value
+        result = SectionA.bool_field
+        self.assertEqual(result, value)
+
+    def test_set_null_value(self):
+        value = 23
+        SectionA.null_value = value
+        result = SectionA.null_value
+        self.assertEqual(result, value)
+
+    def test_set_null_value_with_none(self):
+        value = None
+        SectionA.null_value = value
+        result = SectionA.null_value
+        self.assertEqual(result, value)
+
+    def test_set_list_of_int_field(self):
+        value = [11, 22, 33]
+        SectionA.list_of_int = value
+        result = SectionA.list_of_int
+        self.assertEqual(result, value)
+
+    def test_set_list_of_str_field(self):
+        value = ['z', 'x', 'v']
+        SectionA.list_of_str = value
+        result = SectionA.list_of_str
+        self.assertEqual(result, value)
+
+    def test_set_list_of_float_field(self):
+        value = [1.1, 2.2, 3.3]
+        SectionA.list_of_float = value
+        result = SectionA.list_of_float
+        self.assertEqual(result, value)
+
+    def test_set_list_of_bool_field(self):
+        value = [False, False, False]
+        SectionA.list_of_bool = value
+        result = SectionA.list_of_bool
+        self.assertEqual(result, value)
+
+
 class TestConfigORMFieldsWithDefaultValues(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:

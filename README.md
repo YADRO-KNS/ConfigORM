@@ -4,14 +4,23 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ConfigORM.svg)
 ![PyPI](https://img.shields.io/pypi/v/ConfigORM.svg)
 ![PyPI - License](https://img.shields.io/pypi/l/ConfigORM.svg)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/ConfigORM.svg)
 ----
 
 Heavily inspired by Charles Leifer [peewee](https://github.com/coleifer/peewee) ORM.
 This package provides ORM-like interface to interact with *.ini configs. 
 And map their data onto object models.
 
-Examples
---------
+## Getting Started
+
+### Installation
+You can install ConfigORM with pip:
+```
+$ pip3 install ConfigORM
+```
+
+### Quick Start
+
 Lets say we have config like this:
 ```ini
 #config.ini
@@ -64,8 +73,7 @@ class General(BaseSection):
 Section names must match their counterparts in ini file, but case does not matter at all.
 All spaces in section or key names of config file will be treated as underlines. 
 
-Field Types
---------
+#### Field Types
 
 Depending on field data will be casted to exact type.
 ```
@@ -98,8 +106,7 @@ class TestSection(Section):
 
 ```
  
-Fallback Values
---------
+#### Fallback Values
 
 You may provide default fallback values for your fields.
 If field may return None Type values, null parameter must be set as True
@@ -137,8 +144,7 @@ os.environ['SOMESECTION_LE_FIELD'] = 'env_value'
 
 ```
 
-Model First Approach
---------
+#### Model First Approach
 
 Base Section aside from connection to config file also provides tool to create
  configuration from models, allowing model-first approach. It crates config file,
@@ -151,3 +157,10 @@ Base Section aside from connection to config file also provides tool to create
 >>> BaseSection.check_config_integrity()
 ```
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+
+* Hat tip to Charles Leifer for Inspiration
