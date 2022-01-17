@@ -1,6 +1,6 @@
-from configparser import ConfigParser
-from abc import ABC, abstractmethod
 import os
+from abc import ABC, abstractmethod
+from configparser import ConfigParser
 
 
 class Connector(ABC):
@@ -16,7 +16,7 @@ class Connector(ABC):
         pass
 
     @abstractmethod
-    def get_value(self, section_name: str, attr_name: str):
+    def get_value(self, section_name: str, attr_name: str, env_override: bool = False):
         pass
 
     @abstractmethod
@@ -40,16 +40,20 @@ class IniConnector(Connector):
     def __init__(self, connection_string):
         super().__init__(connection_string)
 
-    def get_value(self, section_name: str, attr_name: str):
+    def get_value(self, section_name: str, attr_name: str, env_override: bool = False):
         config = ConfigParser(allow_no_value=True)
         config.read(self.connection_string)
-
         result = None
-        for section in config.sections():
-            if section.lower().replace(' ', '_') == section_name.lower().replace(' ', '_'):
-                for attr in config[section]:
-                    if attr.lower().replace(' ', '_') == attr_name.lower().replace(' ', '_'):
-                        result = config[section][attr]
+
+        if env_override is True:
+            result = os.getenv(f'{section_name}_{attr_name}'.upper())
+
+        if result is None:
+            for section in config.sections():
+                if section.lower().replace(' ', '_') == section_name.lower().replace(' ', '_'):
+                    for attr in config[section]:
+                        if attr.lower().replace(' ', '_') == attr_name.lower().replace(' ', '_'):
+                            result = config[section][attr]
 
         return result
 

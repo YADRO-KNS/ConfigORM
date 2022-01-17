@@ -5,7 +5,7 @@ with open('README.md', "r") as readme:
 
 setuptools.setup(
     name="ConfigORM",
-    version="0.1.0",
+    version="0.1.1",
     author="Sergey Parshin",
     author_email="parshinsp@gmail.com",
     description="ORM-like *.ini config parser.",
@@ -14,10 +14,11 @@ setuptools.setup(
     url="https://github.com/YADRO-KNS/ConfigORM",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ]
