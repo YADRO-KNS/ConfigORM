@@ -5,7 +5,7 @@ with open('README.md', "r") as readme:
 
 setuptools.setup(
     name="ConfigORM",
-    version="0.1.1",
+    version="0.1.2",
     author="Sergey Parshin",
     author_email="parshinsp@gmail.com",
     description="ORM-like *.ini config parser.",
