@@ -1,6 +1,11 @@
 import os
+import typing
 from abc import ABC, abstractmethod
 from configparser import ConfigParser
+
+import hvac
+from hvac.api.vault_api_base import VaultApiBase
+from hvac.exceptions import InvalidPath
 
 
 class Connector(ABC):
@@ -123,3 +128,72 @@ class IniConnector(Connector):
         if self.is_config_exist() is False:
             file = open(file=self.connection_string, mode="w+")
             file.close()
+
+
+class VaultConnector(Connector):
+    def __init__(self, connection_string: str):
+        super().__init__(connection_string)
+        self._client = hvac.Client(
+            url=os.environ.get('VAULT_URL'),
+            token=os.environ.get('VAULT_TOKEN')
+        )
+
+    @property
+    def _vault_api(self) -> VaultApiBase:
+        return self._client.secrets.kv.v2
+
+    def is_config_exist(self) -> bool:
+        return True
+
+    def create_config(self) -> None:
+        pass
+
+    def get_value(self, section_name: str, attr_name: str, env_override: bool = False) -> typing.Optional[str]:
+        key = f'{section_name}_{attr_name}'.upper()
+        result: typing.Optional[str] = None
+        if env_override:
+            result = os.getenv(key)
+        if result is None:
+            response = self._vault_api.read_secret(path=section_name.upper(), mount_point=self.connection_string)
+            result = response["data"]["data"].get(attr_name.upper())
+        return result
+
+    def is_section_exist(self, section_name: str) -> bool:
+        success = False
+        try:
+            self._vault_api.read_secret(path=section_name.upper(), mount_point=self.connection_string)
+            success = True
+        except InvalidPath:
+            pass
+        return success
+
+    def is_attr_exist(self, section_name: str, attr_name: str) -> bool:
+        success = False
+        try:
+            response = self._vault_api.read_secret(path=section_name.upper(), mount_point=self.connection_string)
+            keys = list(response["data"]["data"].keys())
+            success = attr_name.upper() in keys
+        except InvalidPath:
+            pass
+        return success
+
+    def add_section(self, section_name: str):
+        pass
+
+    def add_attr(self, section_name: str, attr_name: str, value: str):
+        if self.is_section_exist(section_name):
+            self._vault_api.patch(
+                path=section_name.upper(),
+                mount_point=self.connection_string,
+                secret={
+                    attr_name.upper(): value
+                }
+            )
+        else:
+            self._vault_api.create_or_update_secret(
+                path=section_name.upper(),
+                mount_point=self.connection_string,
+                secret={
+                    attr_name.upper(): value
+                }
+            )
