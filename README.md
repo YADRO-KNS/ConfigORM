@@ -8,7 +8,7 @@
 ----
 
 Heavily inspired by Charles Leifer [peewee](https://github.com/coleifer/peewee) ORM.
-This package provides ORM-like interface to interact with *.ini configs. 
+This package provides ORM-like interface to interact with *.ini configs and secrets in HashiCorp Vault. 
 And map their data onto object models.
 
 ## Getting Started
@@ -19,9 +19,12 @@ You can install ConfigORM with pip:
 $ pip3 install ConfigORM
 ```
 
-### Quick Start
+### Two Sources
+The library supports two sources of data storage - ini-file and Vault by HashiCorp. The operation interface in this case will be identical.
 
-Lets say we have config like this:
+### Quick Start ini-file way
+
+Let's say we have config like this:
 ```ini
 #config.ini
 
@@ -36,7 +39,7 @@ debug = True
 connection port = 5000
 ```
 
-Defining models is similar to ORM's:
+Create connection to the source:
 ```python
 #Config.py
 
@@ -47,6 +50,39 @@ current_dir = os.path.abspath(os.path.dirname(__file__))
 connection_string = os.path.join(current_dir, 'config.ini')
 
 connector = IniConnector(connection_string=connection_string)
+```
+
+### Quick Start HashiCorp Vault way
+
+The library reads values of Vault connection params from **environment variables**, so you need to set them in a way that is convenient for you:
+
+- in python code:
+```python
+import os
+
+os.environ['VAULT_URL'] = 'some_url'
+os.environ['VAULT_TOKEN'] = 'some_token'
+```
+- or in the shell:
+```shell
+export VAULT_URL = some_url
+export VAULT_TOKEN = some_token
+```
+
+Create connection to the source:
+```python
+#Config.py
+
+from configorm import *
+
+connector = VaultConnector() 
+```
+
+### Defining models
+
+Defining models is similar to ORM's:
+```Python
+#Config.py
 
 class BaseSection(Section):
     class Meta:
@@ -63,14 +99,13 @@ class General(BaseSection):
     connection_port = IntegerField()
     
 ```
-
 ```
 >>> from Config import Database
 >>> Database.server
 '10.10.10.10'
 ```
 
-Section names must match their counterparts in ini file, but case does not matter at all.
+Section names must match their counterparts in ini file or Vault, but case does not matter at all.
 All spaces in section or key names of config file will be treated as underlines. 
 
 #### Field Types
@@ -144,7 +179,7 @@ os.environ['SOMESECTION_LE_FIELD'] = 'env_value'
 
 ```
 
-#### Model First Approach
+#### Model First Approach with ini-file source
 
 Base Section aside from connection to config file also provides tool to create
  configuration from models, allowing model-first approach. It crates config file,
