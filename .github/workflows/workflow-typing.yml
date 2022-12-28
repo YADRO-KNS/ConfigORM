@@ -1,4 +1,4 @@
-name: Run Flake8 Linter check for Config ORM
+name: Run MyPy check for Config ORM
 
 on:
   push:
