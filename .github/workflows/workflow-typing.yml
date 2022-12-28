@@ -33,13 +33,12 @@ jobs:
           pip3 install --upgrade pip
           pip3 install .
           pip3 install mypy-extensions==0.4.3
-          pip3 install mypy==0.991
+          pip3 install mypy==0.910
           pip3 install typed-ast==1.4.3
           pip3 install typing-extensions==3.10.0.0
           pip3 install mypy2junit
 
       - name: Run Typing
-        continue-on-error: true
         run: |
           bash -ec 'mkdir -p artifacts/typing'
           bash -ec 'mkdir -p .mypy_cache'
