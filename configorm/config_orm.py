@@ -1,4 +1,4 @@
-from .Fields import Field
+from .fields import Field
 
 SECTION_BASE = '_metaclass_helper_'
 

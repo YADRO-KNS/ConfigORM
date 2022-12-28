@@ -4,7 +4,7 @@ from unittest.mock import patch, PropertyMock, Mock
 from hvac.exceptions import InvalidPath
 
 from configorm import VaultConnector
-from configorm.Connectors import Connector
+from configorm.connectors import Connector
 
 
 class TestVaultConnector(unittest.TestCase):
@@ -17,8 +17,8 @@ class TestVaultConnector(unittest.TestCase):
         self.mount_point = 'TEST/'
         self.url = 'http://some/url'
         self.token = 'some_token'
-        with patch('configorm.Connectors.hvac') as self.mock_hvac, \
-                patch('configorm.Connectors.os') as self.mock_os:
+        with patch('configorm.connectors.hvac') as self.mock_hvac, \
+                patch('configorm.connectors.os') as self.mock_os:
             self.connector = VaultConnector(mount_point=self.mount_point, url=self.url, token=self.token)
 
 
@@ -68,8 +68,8 @@ class TestCreateConfig(TestVaultConnector):
         self.assertIsNone(self.connector.create_config())
 
 
-@patch('configorm.Connectors.os')
-@patch('configorm.Connectors.VaultConnector._vault_api', new_callable=PropertyMock)
+@patch('configorm.connectors.os')
+@patch('configorm.connectors.VaultConnector._vault_api', new_callable=PropertyMock)
 class TestGetValue(TestVaultConnector):
 
     def test_get_value_no_override(self, mock__vault_api, mock_os):
@@ -119,7 +119,7 @@ class TestGetValue(TestVaultConnector):
         mock_os.getenv.assert_called_once_with('SECTION_ATTR_NAME')
 
 
-@patch('configorm.Connectors.VaultConnector._vault_api', new_callable=PropertyMock)
+@patch('configorm.connectors.VaultConnector._vault_api', new_callable=PropertyMock)
 class TestIsSectionExist(TestVaultConnector):
 
     def test_is_section_exist_success(self, mock__vault_api):
@@ -158,7 +158,7 @@ class TestIsSectionExist(TestVaultConnector):
         )
 
 
-@patch('configorm.Connectors.VaultConnector._vault_api', new_callable=PropertyMock)
+@patch('configorm.connectors.VaultConnector._vault_api', new_callable=PropertyMock)
 class TestIsAttrExist(TestVaultConnector):
 
     def test_is_attr_exist_success(self, mock__vault_api):
@@ -215,7 +215,7 @@ class TestAddSection(TestVaultConnector):
         self.assertIsNone(self.connector.add_section(section_name=section_name))
 
 
-@patch('configorm.Connectors.VaultConnector._vault_api', new_callable=PropertyMock)
+@patch('configorm.connectors.VaultConnector._vault_api', new_callable=PropertyMock)
 class TestAddAttr(TestVaultConnector):
 
     def test_attr_update(self, mock__vault_api):
