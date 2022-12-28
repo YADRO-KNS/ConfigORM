@@ -50,6 +50,7 @@ jobs:
             --ignore-missing-imports \
             --install-types \
             --non-interactive \
+            --explicit-package-bases \
             --exclude "(setup.py|tests|venv)" \
             .
           cat artifacts/typing/mypy.txt
