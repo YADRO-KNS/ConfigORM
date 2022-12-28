@@ -42,7 +42,7 @@ jobs:
         run: |
           bash -ec 'mkdir -p artifacts/typing'
           bash -ec 'mkdir -p .mypy_cache'
-          mypy .
+          mypy . 2> artifacts/typing/mypy.txt
           cat artifacts/typing/mypy.txt
           mypy2junit artifacts/typing/mypy.txt > artifacts/typing/mypy_junit.xml
 
