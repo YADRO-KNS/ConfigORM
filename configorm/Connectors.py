@@ -9,8 +9,6 @@ from hvac.exceptions import InvalidPath
 
 
 class Connector(ABC):
-    def __init__(self, connection_string):
-        self.connection_string = connection_string
 
     @abstractmethod
     def is_config_exist(self) -> bool:
@@ -42,8 +40,8 @@ class Connector(ABC):
 
 
 class IniConnector(Connector):
-    def __init__(self, connection_string):
-        super().__init__(connection_string)
+    def __init__(self, connection_string: str):
+        self.connection_string = connection_string
 
     def get_value(self, section_name: str, attr_name: str, env_override: bool = False):
         config = ConfigParser(allow_no_value=True)
@@ -131,12 +129,12 @@ class IniConnector(Connector):
 
 
 class VaultConnector(Connector):
-    def __init__(self, connection_string: str):
-        super().__init__(connection_string)
-        self._client = hvac.Client(
-            url=os.environ.get('VAULT_URL'),
-            token=os.environ.get('VAULT_TOKEN')
-        )
+    def __init__(self, mount_point: str, url: str, token: str):
+        self.mount_point = mount_point
+        self.url = url
+        self.token = token
+
+        self._client = hvac.Client(url=self.url, token=self.token)
 
     @property
     def _vault_api(self) -> VaultApiBase:
@@ -154,14 +152,14 @@ class VaultConnector(Connector):
         if env_override:
             result = os.getenv(key)
         if result is None:
-            response = self._vault_api.read_secret(path=section_name.upper(), mount_point=self.connection_string)
+            response = self._vault_api.read_secret(path=section_name.upper(), mount_point=self.mount_point)
             result = response["data"]["data"].get(attr_name.upper())
         return result
 
     def is_section_exist(self, section_name: str) -> bool:
         success = False
         try:
-            self._vault_api.read_secret(path=section_name.upper(), mount_point=self.connection_string)
+            self._vault_api.read_secret(path=section_name.upper(), mount_point=self.mount_point)
             success = True
         except InvalidPath:
             pass
@@ -170,7 +168,7 @@ class VaultConnector(Connector):
     def is_attr_exist(self, section_name: str, attr_name: str) -> bool:
         success = False
         try:
-            response = self._vault_api.read_secret(path=section_name.upper(), mount_point=self.connection_string)
+            response = self._vault_api.read_secret(path=section_name.upper(), mount_point=self.mount_point)
             keys = list(response["data"]["data"].keys())
             success = attr_name.upper() in keys
         except InvalidPath:
@@ -184,7 +182,7 @@ class VaultConnector(Connector):
         if self.is_section_exist(section_name):
             self._vault_api.patch(
                 path=section_name.upper(),
-                mount_point=self.connection_string,
+                mount_point=self.mount_point,
                 secret={
                     attr_name.upper(): value
                 }
@@ -192,7 +190,7 @@ class VaultConnector(Connector):
         else:
             self._vault_api.create_or_update_secret(
                 path=section_name.upper(),
-                mount_point=self.connection_string,
+                mount_point=self.mount_point,
                 secret={
                     attr_name.upper(): value
                 }

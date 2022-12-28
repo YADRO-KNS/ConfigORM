@@ -14,10 +14,12 @@ class TestVaultConnector(unittest.TestCase):
 
     def setUp(self) -> None:
         """Set up test."""
-        self.connection_string = 'TEST/'
+        self.mount_point = 'TEST/'
+        self.url = 'http://some/url'
+        self.token = 'some_token'
         with patch('configorm.Connectors.hvac') as self.mock_hvac, \
                 patch('configorm.Connectors.os') as self.mock_os:
-            self.connector = VaultConnector(connection_string=self.connection_string)
+            self.connector = VaultConnector(mount_point=self.mount_point, url=self.url, token=self.token)
 
 
 class TestAttrs(TestVaultConnector):
@@ -34,13 +36,13 @@ class TestAttrs(TestVaultConnector):
         """
         ### Assertions ###
 
-        self.assertIs(self.connector.connection_string, self.connection_string)
+        self.assertIs(self.connector.mount_point, self.mount_point)
 
         self.assertEqual(
             self.connector._client,
             self.mock_hvac.Client(
-                url=self.mock_os.environ.get('VAULT_URL'),
-                token=self.mock_os.environ.get('VAULT_TOKEN')
+                url=self.url,
+                token=self.token
             )
         )
 
@@ -95,7 +97,7 @@ class TestGetValue(TestVaultConnector):
         self.assertEqual(result, data)
         mock__vault_api.return_value.read_secret.assert_called_once_with(
             path='SECTION',
-            mount_point=self.connection_string
+            mount_point=self.mount_point
         )
 
     def test_get_value_override(self, mock__vault_api, mock_os):
@@ -134,7 +136,7 @@ class TestIsSectionExist(TestVaultConnector):
         self.assertTrue(result)
         mock__vault_api.return_value.read_secret.assert_called_once_with(
             path='SECTION_NAME',
-            mount_point=self.connection_string
+            mount_point=self.mount_point
         )
 
     def test_is_section_exist_failure(self, mock__vault_api):
@@ -152,7 +154,7 @@ class TestIsSectionExist(TestVaultConnector):
         self.assertFalse(result)
         mock__vault_api.return_value.read_secret.assert_called_once_with(
             path='SECTION_NAME',
-            mount_point=self.connection_string
+            mount_point=self.mount_point
         )
 
 
@@ -184,7 +186,7 @@ class TestIsAttrExist(TestVaultConnector):
         self.assertTrue(result)
         mock__vault_api.return_value.read_secret.assert_called_once_with(
             path='SECTION_NAME',
-            mount_point=self.connection_string
+            mount_point=self.mount_point
         )
 
     def test_is_attr_exist_failure(self, mock__vault_api):
@@ -233,7 +235,7 @@ class TestAddAttr(TestVaultConnector):
 
         mock__vault_api.return_value.patch.assert_called_once_with(
             path='SECTION_NAME',
-            mount_point=self.connection_string,
+            mount_point=self.mount_point,
             secret={'ATTR_NAME': value}
         )
 
@@ -256,7 +258,7 @@ class TestAddAttr(TestVaultConnector):
 
         mock__vault_api.return_value.create_or_update_secret.assert_called_once_with(
             path='SECTION_NAME',
-            mount_point=self.connection_string,
+            mount_point=self.mount_point,
             secret={'ATTR_NAME': value}
         )
 
