@@ -11,7 +11,7 @@ on:
       - master
 
 jobs:
-  build:
+  unit-tests-run:
     runs-on: ubuntu-latest
 
     strategy:
@@ -44,4 +44,4 @@ jobs:
         if: always()
         with:
           report_paths: 'artifacts/${{ matrix.python-version }}/tests/*.xml'
-          check_name: Unittests ${{ matrix.python-version }}
+          check_name: Unittests ${{ matrix.python-version }} Results
