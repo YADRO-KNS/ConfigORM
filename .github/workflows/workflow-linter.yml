@@ -51,3 +51,4 @@ jobs:
         with:
           report_paths: 'artifacts/linter/*.xml'
           check_name: Linter Results
+          fail_on_failure: true
