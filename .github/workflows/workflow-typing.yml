@@ -42,7 +42,15 @@ jobs:
         continue-on-error: true
         run: |
           bash -ec 'mkdir -p artifacts/typing'
-          mypy --no-strict-optional --no-warn-no-return --warn-unused-ignores --ignore-missing-imports --install-types --non-interactive --exclude "(setup.py|tests|venv)" . 2> artifacts/typing/mypy.txt
+          mypy \
+            --no-strict-optional \
+            --no-warn-no-return \
+            --warn-unused-ignores \
+            --ignore-missing-imports \
+            --install-types \
+            --non-interactive \
+            --exclude "(setup.py|tests|venv)" \
+            . 2> artifacts/typing/mypy.txt
           mypy2junit artifacts/typing/mypy.txt > artifacts/typing/mypy_junit.xml
 
       - name: Publish Typing artifacts
