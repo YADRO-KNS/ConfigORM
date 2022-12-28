@@ -47,7 +47,6 @@ jobs:
             --no-warn-no-return \
             --warn-unused-ignores \
             --ignore-missing-imports \
-            --install-types \
             --non-interactive \
             --exclude "(setup.py|tests|venv)" \
             .
