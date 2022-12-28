@@ -51,6 +51,7 @@ jobs:
             --non-interactive \
             --exclude "(setup.py|tests|venv)" \
             . 2> artifacts/typing/mypy.txt
+          cat artifacts/typing/mypy.txt
           mypy2junit artifacts/typing/mypy.txt > artifacts/typing/mypy_junit.xml
 
       - name: Publish Typing artifacts
