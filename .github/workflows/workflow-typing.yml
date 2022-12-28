@@ -42,11 +42,13 @@ jobs:
         continue-on-error: true
         run: |
           bash -ec 'mkdir -p artifacts/typing'
+          bash -ec 'mkdir -p .mypy_cache'
           mypy \
             --no-strict-optional \
             --no-warn-no-return \
             --warn-unused-ignores \
             --ignore-missing-imports \
+            --install-types \
             --non-interactive \
             --exclude "(setup.py|tests|venv)" \
             .
