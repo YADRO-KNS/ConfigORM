@@ -54,28 +54,17 @@ connector = IniConnector(connection_string=connection_string)
 
 ### Quick Start HashiCorp Vault way
 
-The library reads values of Vault connection params from **environment variables**, so you need to set them in a way that is convenient for you:
-
-- in python code:
-```python
-import os
-
-os.environ['VAULT_URL'] = 'some_url'
-os.environ['VAULT_TOKEN'] = 'some_token'
-```
-- or in the shell:
-```shell
-export VAULT_URL = some_url
-export VAULT_TOKEN = some_token
-```
-
-Create connection to the source:
+Provide connection data for Vault server and KV store in it:
 ```python
 #Config.py
 
-from configorm import *
+from configorm import VaultConnector
 
-connector = VaultConnector() 
+connector = VaultConnector(
+    mount_point='SOME_KV_STORE/',
+    url='http://some-vault-url.com',
+    token='TOKEN_FOR_SECRETS'
+) 
 ```
 
 ### Defining models
@@ -83,6 +72,7 @@ connector = VaultConnector()
 Defining models is similar to ORM's:
 ```Python
 #Config.py
+
 
 class BaseSection(Section):
     class Meta:
@@ -110,7 +100,7 @@ All spaces in section or key names of config file will be treated as underlines.
 
 #### Field Types
 
-Depending on field data will be casted to exact type.
+Depending on field data will be cast to exact type.
 ```
 >>> from Config import General
 >>> General.debug
@@ -126,7 +116,7 @@ Available Field Types:
 * **FloatField** 
 * **ListField** 
 
-Most of field types are self-explanatory, ListField is a bit tricky. It allows to store and 
+Most field types are self-explanatory, ListField is a bit tricky. It allows to store and 
 extract data as list of homogeneous objects, such as strings, integers, floats and booleans.
 You must provide exec type of stored objects.
 
@@ -179,13 +169,13 @@ os.environ['SOMESECTION_LE_FIELD'] = 'env_value'
 
 ```
 
-#### Model First Approach with ini-file source
+#### Model First Approach
 
 Base Section aside from connection to config file also provides tool to create
  configuration from models, allowing model-first approach. It crates config file,
  sections from your models names and option based on provided fields. In case if
- fields have default values, they will be written in config as well. Otherwise
- options will be filled with empty values.
+ fields have default values, they will be written in config as well. Otherwise,
+ options will be filled with empty values. Works with both ini and Vault connections.
  
 ```
 >>> from Config import *
