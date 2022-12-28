@@ -60,5 +60,5 @@ jobs:
         if: always()
         with:
           report_paths: 'artifacts/typing/*.xml'
-          check_name: Linter Results
+          check_name: Typing Results
           fail_on_failure: true
