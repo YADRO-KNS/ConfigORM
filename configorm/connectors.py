@@ -19,7 +19,11 @@ class Connector(ABC):
         pass
 
     @abstractmethod
-    def get_value(self, section_name: str, attr_name: str, env_override: bool = False):
+    def get_value(self, section_name: str, attr_name: str, env_override: bool = False) -> typing.Optional[str]:
+        pass
+
+    @abstractmethod
+    def set_value(self, section_name: str, attr_name: str, value: str) -> None:
         pass
 
     @abstractmethod
@@ -31,11 +35,11 @@ class Connector(ABC):
         pass
 
     @abstractmethod
-    def add_section(self, section_name: str):
+    def add_section(self, section_name: str) -> None:
         pass
 
     @abstractmethod
-    def add_attr(self, section_name: str, attr_name: str, value: str):
+    def add_attr(self, section_name: str, attr_name: str, value: str) -> None:
         pass
 
 
@@ -43,7 +47,7 @@ class IniConnector(Connector):
     def __init__(self, connection_string: str):
         self.connection_string = connection_string
 
-    def get_value(self, section_name: str, attr_name: str, env_override: bool = False):
+    def get_value(self, section_name: str, attr_name: str, env_override: bool = False) -> typing.Optional[str]:
         config = ConfigParser(allow_no_value=True)
         config.read(self.connection_string)
         result = None
@@ -60,7 +64,7 @@ class IniConnector(Connector):
 
         return result
 
-    def set_value(self, section_name: str, attr_name: str, value: str):
+    def set_value(self, section_name: str, attr_name: str, value: str) -> None:
         config = ConfigParser(allow_no_value=True)
         if value is not None:
             value = str(value)
@@ -101,7 +105,7 @@ class IniConnector(Connector):
 
         return result
 
-    def add_section(self, section_name: str):
+    def add_section(self, section_name: str) -> None:
         if self.is_section_exist(section_name=section_name) is False:
             config = ConfigParser(allow_no_value=True)
             config.read(self.connection_string)
@@ -109,7 +113,7 @@ class IniConnector(Connector):
             with open(file=self.connection_string, mode='w') as file:
                 config.write(fp=file)
 
-    def add_attr(self, section_name: str, attr_name: str, value: str):
+    def add_attr(self, section_name: str, attr_name: str, value: str) -> None:
         if self.is_attr_exist(section_name=section_name, attr_name=attr_name) is False:
             if value is not None:
                 value = str(value)
@@ -129,6 +133,7 @@ class IniConnector(Connector):
 
 
 class VaultConnector(Connector):
+
     def __init__(self, mount_point: str, url: str, token: str):
         self.mount_point = mount_point
         self.url = url
@@ -156,6 +161,9 @@ class VaultConnector(Connector):
             result = response["data"]["data"].get(attr_name.upper())
         return result
 
+    def set_value(self, section_name: str, attr_name: str, value: str) -> None:
+        pass
+
     def is_section_exist(self, section_name: str) -> bool:
         success = False
         try:
@@ -175,10 +183,10 @@ class VaultConnector(Connector):
             pass
         return success
 
-    def add_section(self, section_name: str):
+    def add_section(self, section_name: str) -> None:
         pass
 
-    def add_attr(self, section_name: str, attr_name: str, value: str):
+    def add_attr(self, section_name: str, attr_name: str, value: str) -> None:
         if self.is_section_exist(section_name):
             self._vault_api.patch(
                 path=section_name.upper(),
