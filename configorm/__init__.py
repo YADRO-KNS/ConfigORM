@@ -1,11 +1,19 @@
 __all__ = [
-    'Section', 'StringField', 'IntegerField', 'BooleanField', 'FloatField', 'IniConnector', 'ListField'
+    'Section',
+    'StringField',
+    'IntegerField',
+    'BooleanField',
+    'FloatField',
+    'ListField',
+    'IniConnector',
+    'VaultConnector'
 ]
 
-from .ConfigORM import Section
-from .Fields import StringField
-from .Fields import IntegerField
-from .Fields import BooleanField
-from .Fields import FloatField
-from .Fields import ListField
-from .Connectors import IniConnector
+from .config_orm import Section
+from .fields import StringField
+from .fields import IntegerField
+from .fields import BooleanField
+from .fields import FloatField
+from .fields import ListField
+from .connectors import IniConnector
+from .connectors import VaultConnector

@@ -1,6 +1,5 @@
-import unittest
 import os
-from configparser import *
+import unittest
 
 from configorm import *
 

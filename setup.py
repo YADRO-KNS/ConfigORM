@@ -3,18 +3,22 @@ import setuptools
 with open('README.md', "r") as readme:
     long_description = readme.read()
 
+with open('requirements.txt') as fp:
+    install_requires = fp.read()
+
 setuptools.setup(
     name="ConfigORM",
-    version="0.1.1",
+    version="1.0.0",
     author="Sergey Parshin",
     author_email="parshinsp@gmail.com",
-    description="ORM-like *.ini config parser.",
+    description="ORM-like *.ini file and HashiCorp Vault config parser",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/YADRO-KNS/ConfigORM",
+    install_requires=install_requires,
     packages=setuptools.find_packages(),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
