@@ -1,0 +1,47 @@
+name: Run Unit tests for Config ORM
+
+on:
+  push:
+    branches:
+      - development
+      - master
+  pull_request:
+    branches:
+      - development
+      - master
+
+jobs:
+  unit-tests-run:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies ${{ matrix.python-version }}
+        run: |
+          pip3 install --upgrade pip
+          pip3 install .
+          pip3 install unittest-xml-reporting
+
+      - name: Run Unittests ${{ matrix.python-version }}
+        run: |
+          bash -ec 'mkdir -p artifacts/${{ matrix.python-version }}/tests'
+          python3 -m xmlrunner discover tests -v -o artifacts/${{ matrix.python-version }}/tests
+
+      - name: Publish Unittest artifacts ${{ matrix.python-version }}
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: 'artifacts/${{ matrix.python-version }}/tests/*.xml'
+          check_name: Unittests ${{ matrix.python-version }} Results

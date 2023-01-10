@@ -1,0 +1,55 @@
+name: Run MyPy check for Config ORM
+
+on:
+  push:
+    branches:
+      - development
+      - master
+  pull_request:
+    branches:
+      - development
+      - master
+
+jobs:
+  typing-run:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies ${{ matrix.python-version }}
+        run: |
+          pip3 install --upgrade pip
+          pip3 install -r requirements.txt
+          pip3 install mypy-extensions==0.4.3
+          pip3 install mypy==0.910
+          pip3 install typed-ast==1.4.3
+          pip3 install typing-extensions==3.10.0.0
+          pip3 install mypy2junit
+
+      - name: Run Typing
+        run: |
+          bash -ec 'mkdir -p artifacts/typing'
+          bash -ec 'mkdir -p .mypy_cache'
+          mypy . 2> artifacts/typing/mypy.txt
+          cat artifacts/typing/mypy.txt
+          mypy2junit artifacts/typing/mypy.txt > artifacts/typing/mypy_junit.xml
+
+      - name: Publish Typing artifacts
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: 'artifacts/typing/*.xml'
+          check_name: Typing Results
+          fail_on_failure: true

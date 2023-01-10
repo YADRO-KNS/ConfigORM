@@ -1,15 +1,24 @@
-class Field(object):
-    def __init__(self, default=None, null: bool = False, env_override: bool = False):
+import typing
+
+
+class Field:
+    """Field prototype class"""
+
+    def __init__(self,
+                 default: typing.Optional[typing.Any] = None,
+                 null: bool = False,
+                 env_override: bool = False
+                 ) -> None:
         self.default = default
         self.null = null
         self.env_override = env_override
-        self.section = None
-        self.name = None
-        self.value = None
+        self.section: typing.Optional[typing.Any] = None
+        self.name: typing.Optional[typing.Any] = None
+        self.value: typing.Optional[typing.Any] = None
 
-        self.meta = None
+        self.meta: typing.Optional[typing.Any] = None
 
-    def __get__(self, instance, owner):
+    def __get__(self, instance: typing.Any, owner: typing.Any) -> typing.Any:
         value = self.meta.connector.get_value(
             section_name=self.section.meta.name,
             attr_name=self.name,
@@ -21,7 +30,7 @@ class Field(object):
             return None
         return self.cast_value(value)
 
-    def __set__(self, instance, value):
+    def __set__(self, instance: typing.Any, value: str) -> None:
         if value is None:
             if self.null is False:
                 raise ValueError('None value passed into non null Field')
@@ -32,56 +41,110 @@ class Field(object):
         else:
             raise TypeError('Incorrect type passed into Field')
 
-    def cast_value(self, value):
+    def cast_value(self, value: str) -> typing.Any:
+        """
+        Cast value to the field type
+        :param value: value to cast
+        :return: processed value
+        """
         pass
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Any) -> bool:
+        """
+        Check if value type is the same as field type
+        :param value: value to check
+        :return: check result
+        """
         pass
 
-    def bind(self, section, name, meta):
+    def bind(self, section: typing.Any, name: typing.Any, meta: typing.Any) -> None:
+        """Binds field instance to Section"""
         self.section = section
         self.name = name
         self.meta = meta
 
 
 class IntegerField(Field):
-    def __init__(self, default: int = None, null: bool = False, env_override: bool = False):
+    """Field class for integer values"""
+
+    def __init__(self, default: int = None, null: bool = False, env_override: bool = False) -> None:
         super().__init__(default=default, null=null, env_override=env_override)
 
-    def cast_value(self, value):
+    def cast_value(self, value: str) -> typing.Any:
+        """
+        Cast value to the field type
+        :param value: value to cast
+        :return: processed value
+        """
         return int(value)
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Any) -> bool:
+        """
+        Check if value type is the same as field type
+        :param value: value to check
+        :return: check result
+        """
         return isinstance(value, int)
 
 
 class StringField(Field):
-    def __init__(self, default: str = None, null: bool = False, env_override: bool = False):
+    """Field class for string values"""
+
+    def __init__(self, default: str = None, null: bool = False, env_override: bool = False) -> None:
         super().__init__(default=default, null=null, env_override=env_override)
 
-    def cast_value(self, value):
+    def cast_value(self, value: str) -> typing.Any:
+        """
+        Cast value to the field type
+        :param value: value to cast
+        :return: processed value
+        """
         return str(value).strip()
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Any) -> bool:
+        """
+        Check if value type is the same as field type
+        :param value: value to check
+        :return: check result
+        """
         return isinstance(value, str)
 
 
 class FloatField(Field):
-    def __init__(self, default: float = None, null: bool = False, env_override: bool = False):
+    """Field class for float values"""
+
+    def __init__(self, default: float = None, null: bool = False, env_override: bool = False) -> None:
         super().__init__(default=default, null=null, env_override=env_override)
 
-    def cast_value(self, value):
+    def cast_value(self, value: str) -> typing.Any:
+        """
+        Cast value to the field type
+        :param value: value to cast
+        :return: processed value
+        """
         return float(value)
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Any) -> bool:
+        """
+        Check if value type is the same as field type
+        :param value: value to check
+        :return: check result
+        """
         return isinstance(value, float)
 
 
 class BooleanField(Field):
-    def __init__(self, default: bool = None, null: bool = False, env_override: bool = False):
+    """Field class for boolean values"""
+
+    def __init__(self, default: bool = None, null: bool = False, env_override: bool = False) -> None:
         super().__init__(default=default, null=null, env_override=env_override)
 
-    def cast_value(self, value: str):
+    def cast_value(self, value: str) -> typing.Any:
+        """
+        Cast value to the field type
+        :param value: value to cast
+        :return: processed value
+        """
         if value.lower() in ['true', '1']:
             return True
         elif value.lower() in ['false', '0']:
@@ -89,20 +152,32 @@ class BooleanField(Field):
         else:
             return bool(value)
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Any) -> bool:
+        """
+        Check if value type is the same as field type
+        :param value: value to check
+        :return: check result
+        """
         return isinstance(value, bool)
 
 
 class ListField(Field):
-    def __init__(self, var_type: type, default: list = None, null: bool = False, env_override: bool = False):
+    """Field class for list of values"""
+
+    def __init__(self, var_type: type, default: list = None, null: bool = False, env_override: bool = False) -> None:
         self.type = var_type
         super().__init__(default=default, null=null, env_override=env_override)
 
         if self.type not in [int, str, float, bool]:
             raise Exception('Unknown base type %s passed into ListField' % str(self.type))
 
-    def cast_value(self, value):
-        result = []
+    def cast_value(self, value: str) -> typing.Any:
+        """
+        Cast value to the field type
+        :param value: value to cast
+        :return: processed value
+        """
+        result: typing.List[typing.Any] = []
         for element in value.replace('[', '').replace(']', '').split(','):
             if self.type == int:
                 result.append(int(element.strip()))
@@ -119,5 +194,10 @@ class ListField(Field):
                     result.append(bool(element.strip()))
         return result
 
-    def check_value(self, value):
+    def check_value(self, value: typing.Any) -> bool:
+        """
+        Check if value type is the same as field type
+        :param value: value to check
+        :return: check result
+        """
         return isinstance(value, list) and all(isinstance(n, self.type) for n in value)
