@@ -28,7 +28,7 @@ class Field:
             return self.default
         if value is None and self.null is True:
             return None
-        return self.cast_value(value)
+        return self.cast_value(value) if self.check_value(value) is False else value
 
     def __set__(self, instance: typing.Any, value: str) -> None:
         if value is None:
