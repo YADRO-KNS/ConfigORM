@@ -6,7 +6,7 @@ with open('README.md', "r") as readme:
 
 setuptools.setup(
     name="ConfigORM",
-    version="1.0.0",
+    version="1.0.1",
     author="Sergey Parshin",
     author_email="parshinsp@gmail.com",
     description="ORM-like *.ini file and HashiCorp Vault config parser",
